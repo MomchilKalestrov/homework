@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>BMI & Игра за отгатване</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            margin: 2rem;
+            line-height: 1.4;
+            background: #f7f9fc;
+            color: #222;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        section {
+            background: #fff;
+            padding: 1.2rem 1.4rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.8rem;
+        }
+
+        label {
+            display: block;
+            margin: .5rem 0 .25rem;
+            font-weight: 600;
+        }
+
+        input[type=number] {
+            padding: .5rem;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            cursor: pointer;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: .55rem 1rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-top: .6rem;
+        }
+
+        button.secondary {
+            background: #64748b;
+        }
+
+        button:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .result,
+        .messages {
+            margin-top: .75rem;
+            min-height: 1.2rem;
+            font-weight: 600;
+        }
+
+        .messages p {
+            margin: .35rem 0;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: .25rem .55rem;
+            background: #e2e8f0;
+            border-radius: 4px;
+            font-size: .8rem;
+            margin-left: .5rem;
+        }
+
+        .success {
+            color: #059669;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        .warn {
+            color: #d97706;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>BMI Калкулатор и Игра</h1>
+
+    <section id="bmi-section">
+        <h2>BMI Калкулатор</h2>
+        <form id="bmi-form" onsubmit="event.preventDefault(); calcBMI();">
+            <label for="weight">Тегло (кг)</label>
+            <input id="weight" name="weight" type="number" step="0.1" min="1" required />
+            <label for="height">Височина (м)</label>
+            <input id="height" name="height" type="number" step="0.01" min="0.5" required />
+            <button type="submit">Изчисли BMI</button>
+        </form>
+        <div class="result" id="bmi-result"></div>
+    </section>
+
+    <section id="game-section">
+        <h2>Игра за отгатване на число (1–100)</h2>
+        <div>
+            <button id="start-btn" onclick="startGame()">Започни игра</button>
+            <button id="restart-btn" class="secondary" onclick="restartGame()" style="display:none;">Нова игра</button>
+        </div>
+        <form id="guess-form" onsubmit="event.preventDefault(); submitGuess();" style="margin-top:1rem; display:none;">
+            <label for="guess">Вашето предположение</label>
+            <input id="guess" name="guess" type="number" min="1" max="100" required />
+            <button type="submit">Потвърди</button>
+            <span class="tag" id="attempts-tag"></span>
+        </form>
+        <div class="messages" id="messages"></div>
+    </section>
+
+    <script>
+        // BMI function
+        function bmi(weightKg, heightM) {
+            const value = weightKg / (heightM * heightM);
+            if (value <= 18.5) return "Поднормено тегло";
+            if (value <= 25.0) return "Нормално тегло";
+            if (value <= 30.0) return "Наднормено тегло";
+            return "Затлъстяване";
+        }
+        function calcBMI() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const resultEl = document.getElementById('bmi-result');
+            if (!weight || !height || height <= 0) {
+                resultEl.textContent = 'Моля, въведете коректни стойности.';
+                resultEl.className = 'result error';
+                return;
+            }
+            const category = bmi(weight, height);
+            const value = (weight / (height * height)).toFixed(2);
+            resultEl.textContent = `BMI: ${value} → ${category}`;
+            resultEl.className = 'result';
+        }
+
+        // Guessing game
+        let targetNumber = null;
+        let attempts = 0;
+        const maxAttempts = 5;
+
+        function startGame() {
+            targetNumber = Math.floor(Math.random() * 100) + 1; // 1..100
+            attempts = 0;
+            document.getElementById('messages').innerHTML = '';
+            document.getElementById('guess-form').style.display = 'block';
+            document.getElementById('start-btn').style.display = 'none';
+            document.getElementById('restart-btn').style.display = 'none';
+            updateAttemptsTag();
+            document.getElementById('guess').focus();
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        function updateAttemptsTag() {
+            document.getElementById('attempts-tag').textContent = `${attempts}/${maxAttempts} опита`;
+        }
+
+        function submitGuess() {
+            if (targetNumber === null) return;
+            const guessInput = document.getElementById('guess');
+            const guess = parseInt(guessInput.value, 10);
+            if (Number.isNaN(guess) || guess < 1 || guess > 100) {
+                addMessage('Моля, въведете число между 1 и 100.', 'error');
+                return;
+            }
+            attempts++;
+            updateAttemptsTag();
+
+            if (guess === targetNumber) {
+                addMessage('Поздравления! Отгатнахте числото!', 'success');
+                endGame();
+                return;
+            } else if (guess < targetNumber) {
+                addMessage('Твърде ниско!', 'warn');
+            } else {
+                addMessage('Твърде високо!', 'warn');
+            }
+
+            if (attempts >= maxAttempts) {
+                addMessage(`Не успяхте. Числото беше: ${targetNumber}`, 'error');
+                endGame();
+            }
+            guessInput.value = '';
+            guessInput.focus();
+        }
+
+        function addMessage(text, type) {
+            const container = document.getElementById('messages');
+            const p = document.createElement('p');
+            p.textContent = text;
+            if (type === 'success') p.className = 'success';
+            else if (type === 'error') p.className = 'error';
+            else if (type === 'warn') p.className = 'warn';
+            container.appendChild(p);
+        }
+
+        function endGame() {
+            document.getElementById('guess-form').style.display = 'none';
+            document.getElementById('restart-btn').style.display = 'inline-block';
+            document.getElementById('attempts-tag').textContent = `${attempts}/${maxAttempts} опита (край)`;
+            targetNumber = null;
+        }
+    </script>
+</body>
+
+</html>

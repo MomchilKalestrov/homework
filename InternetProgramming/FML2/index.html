@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login / Register</title>
+  <style>
+    :root {
+      --bg: #f5f6fa;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --accent: #3b82f6;
+      --accent-2: #1d4ed8;
+      --ring: rgba(59, 130, 246, 0.35);
+      --border: #e5e7eb;
+      --error: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--ink);
+      background: radial-gradient(1200px 800px at 10% 10%, #eef2ff 0, transparent 50%),
+                  radial-gradient(900px 700px at 90% 20%, #e0f2fe 0, transparent 50%),
+                  var(--bg);
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+
+    .card {
+      width: min(920px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* Stack on small screens */
+    @media (max-width: 720px) {
+      .card { grid-template-columns: 1fr; }
+      .illustration { display: none; }
+    }
+
+    .illustration {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      padding: 3rem 2.5rem;
+      display: grid;
+      align-content: center;
+      gap: 1rem;
+    }
+
+    .illustration h1 { margin: 0; font-size: 2rem; line-height: 1.2; }
+    .illustration p { margin: 0; color: rgba(255,255,255,0.9); }
+
+    .panel {
+      padding: 2rem;
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      appearance: none;
+      border: none;
+      margin: 0;
+      padding: 0.9rem 1.1rem;
+      font: inherit;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .tab[aria-selected="true"] {
+      color: var(--ink);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    form {
+      display: grid;
+      gap: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .field { display: grid; gap: 0.35rem; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.8rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      background: #fff;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--ring);
+    }
+
+    .row { display: flex; gap: 0.8rem; }
+    .row > * { flex: 1; }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 0.25rem;
+    }
+
+    button[type="submit"] {
+      appearance: none;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.8rem 1.1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform .05s ease, filter .15s ease, background .15s ease;
+    }
+    button[type="submit"]:hover { filter: brightness(1.05); }
+    button[type="submit"]:active { transform: translateY(1px); }
+
+    .helper { font-size: 0.85rem; color: var(--muted); }
+    .error { color: var(--error); font-size: 0.9rem; display: none; }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <section class="illustration" aria-hidden="true">
+      <h1>Welcome back</h1>
+      <p>Log in to continue, or register to get started. No frills, just the basics.</p>
+    </section>
+
+    <section class="panel">
+      <nav class="tabs" role="tablist" aria-label="Forms">
+        <button id="tab-login" class="tab" role="tab" aria-selected="true" aria-controls="panel-login">Login</button>
+        <button id="tab-register" class="tab" role="tab" aria-selected="false" aria-controls="panel-register">Register</button>
+      </nav>
+
+      <!-- Login Form -->
+      <section id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+        <form id="form-login">
+          <div class="field">
+            <label for="login-email">Email</label>
+            <input id="login-email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+          </div>
+          <div class="actions">
+            <span class="helper">Forgot password? Take it up with future you.</span>
+            <button type="submit">Sign in</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Register Form -->
+      <section id="panel-register" role="tabpanel" aria-labelledby="tab-register" class="hidden">
+        <form id="form-register">
+          <div class="row">
+            <div class="field">
+              <label for="first-name">First name</label>
+              <input id="first-name" name="firstName" type="text" autocomplete="given-name" required />
+            </div>
+            <div class="field">
+              <label for="last-name">Last name</label>
+              <input id="last-name" name="lastName" type="text" autocomplete="family-name" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="reg-email">Email</label>
+            <input id="reg-email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="reg-password">Password</label>
+            <input id="reg-password" name="password" type="password" autocomplete="new-password" required />
+          </div>
+          <div class="actions">
+            <span class="helper">By registering you agree to our extremely reasonable terms.</span>
+            <button type="submit">Create account</button>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    // Tabs logic (purely presentational)
