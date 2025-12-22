@@ -21,8 +21,8 @@ const Counter: React.FC<Props> = ({
 				-
 			</button>
 			<button onClick={ () => setCounter(state => Math.min(max, state + 1)) }> 	
-                		+
-                	</button>
+                +
+            </button>
 		</div>
 	);
 };
