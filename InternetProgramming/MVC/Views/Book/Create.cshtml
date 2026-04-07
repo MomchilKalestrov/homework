@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Add New Book";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">➕ Add New Book</h2>
+
+    <form asp-action="Create" method="post" style="max-width: 480px;">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label for="title" class="form-label fw-bold">Title</label>
+            <input type="text" id="title" name="title" class="form-control"
+                   placeholder="Enter book title" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="author" class="form-label fw-bold">Author</label>
+            <input type="text" id="author" name="author" class="form-control"
+                   placeholder="Enter author name" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="yearPublished" class="form-label fw-bold">Year Published</label>
+            <input type="number" id="yearPublished" name="yearPublished" class="form-control"
+                   placeholder="e.g. 2023" min="1" max="2100" required />
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <!-- Option 2: Submit (add book) -->
+            <button type="submit" class="btn btn-success">2. Save Book</button>
+
+            <!-- Option 1: Back to list -->
+            <a class="btn btn-primary" asp-action="Index">1. Show Books</a>
+
+            <!-- Option 3: Exit / Go home -->
+            <a class="btn btn-secondary" asp-controller="Home" asp-action="Index">3. Exit</a>
+        </div>
+    </form>
+</div>

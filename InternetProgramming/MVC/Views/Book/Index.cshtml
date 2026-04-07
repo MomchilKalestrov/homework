@@ -1,0 +1,59 @@
+@model List<MVC.Models.Book>
+
+@{
+    ViewData["Title"] = "Book List";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">📚 Book List</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">No books found.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Year Published</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@Model[i].Title</td>
+                        <td>@Model[i].Author</td>
+                        <td>@Model[i].YearPublished</td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a class="btn btn-sm btn-info text-white" asp-action="Details" asp-route-id="@Model[i].Id">Details</a>
+                                <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@Model[i].Id">Edit</a>
+                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@Model[i].Id">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <hr />
+    <h5>Menu</h5>
+    <div class="d-flex gap-2 mt-3">
+        <!-- Option 1: Show book list (current page) -->
+        <a class="btn btn-primary" asp-action="Index">1. Show Books</a>
+
+        <!-- Option 2: Add a new book -->
+        <a class="btn btn-success" asp-action="Create">2. Add New Book</a>
+
+        <!-- Option 3: Exit / Go home -->
+        <a class="btn btn-secondary" asp-controller="Home" asp-action="Index">3. Exit</a>
+    </div>
+</div>
